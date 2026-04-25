@@ -1,0 +1,225 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🎧【秘書】独立起動（最初にこれ）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH>/secretariat && claude --dangerously-skip-permissions"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🚀【tmux】PM+開発+watcher 起動 & アタッチ（秘書は別途）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH> && ./start-agents.sh && tmux attach -t your-company"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🏢【tmux】全部署 一斉起動 & アタッチ（秘書は別途）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH> && ./start-agents-all.sh && tmux attach -t your-company"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🔗【tmux】アタッチのみ（既に起動中の場合）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "tmux attach -t your-company"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🛑【tmux】セッション停止",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "tmux kill-session -t your-company"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PM: Claude Code 起動（個別）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH>/product-management && claude --dangerously-skip-permissions"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "agents"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "開発: Claude Code 起動（個別）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH>/development && claude --dangerously-skip-permissions"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "agents"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "マーケ: Claude Code 起動（個別）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH>/marketing && claude --dangerously-skip-permissions"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "agents"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "経理: Claude Code 起動（個別）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH>/accounting && claude --dangerously-skip-permissions"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "agents"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "リサーチ: Claude Code 起動（個別）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH>/research && claude --dangerously-skip-permissions"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "agents"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "法務: Claude Code 起動（個別）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH>/legal && claude --dangerously-skip-permissions"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "agents"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "社長室: Claude Code 起動（個別）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH>/ceo-office && claude --dangerously-skip-permissions"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "agents"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "経営企画: Claude Code 起動（個別）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH>/corporate-planning && claude --dangerously-skip-permissions"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "agents"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "extractor: Claude Code 起動（個別）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH> && claude --dangerously-skip-permissions"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "agents"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "watcher: ファイル監視（単体）",
+      "type": "shell",
+      "command": "wsl.exe",
+      "args": [
+        "bash", "-ic",
+        "cd <YOUR_PATH> && ./watcher.sh"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "agents"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

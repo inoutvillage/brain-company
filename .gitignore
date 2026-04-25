@@ -1,0 +1,128 @@
+# ============================================
+# 機密情報・トークン（絶対にコミットしない）
+# ============================================
+.mcp.json
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+*_token.txt
+*_secret.txt
+
+# ============================================
+# 個人情報・実データ（git 管理外）
+# ============================================
+
+# 社長プロフィール（個人情報）
+ceo-office/profile.md
+ceo-office/profile.md.example.bak
+
+# 意思決定ログ（社内機密）
+ceo-office/decisions/*.md
+!ceo-office/decisions/.gitkeep
+!ceo-office/decisions/_template.md
+
+# 秘書室の個人データ
+secretariat/memos/*.md
+!secretariat/memos/.gitkeep
+secretariat/todos/*.md
+!secretariat/todos/.gitkeep
+secretariat/schedules/*.md
+!secretariat/schedules/.gitkeep
+secretariat/inbox/*.md
+!secretariat/inbox/.gitkeep
+secretariat/inbox/archive/**
+!secretariat/inbox/archive/.gitkeep
+secretariat/ReferenceFILEs/*
+!secretariat/ReferenceFILEs/CLAUDE.md
+!secretariat/ReferenceFILEs/.gitkeep
+
+# 法務（契約書・登記書類など機密）
+legal/corporate-establishment/**
+!legal/corporate-establishment/.gitkeep
+legal/contracts/**
+!legal/contracts/.gitkeep
+legal/compliance/*.md
+!legal/compliance/.gitkeep
+
+# 経理（収支実データ）
+accounting/records/**
+!accounting/records/.gitkeep
+accounting/analysis-reports/**
+!accounting/analysis-reports/.gitkeep
+
+# マーケ（SNS実績・企画）
+marketing/sns-operations/**
+!marketing/sns-operations/.gitkeep
+marketing/content-planning/**
+!marketing/content-planning/.gitkeep
+
+# 実プロジェクト・実依頼・実報告
+product-management/projects/**
+!product-management/projects/.gitkeep
+product-management/requests/*.md
+!product-management/requests/.gitkeep
+product-management/reports/*.md
+!product-management/reports/.gitkeep
+product-management/progress-reports/*.md
+!product-management/progress-reports/.gitkeep
+
+development/projects/**
+!development/projects/.gitkeep
+development/tickets/*.md
+!development/tickets/.gitkeep
+development/reports/*.md
+!development/reports/.gitkeep
+
+# 経営企画（実コンサルクライアント・戦略文書）
+corporate-planning/plans/**
+!corporate-planning/plans/.gitkeep
+corporate-planning/templates/**
+!corporate-planning/templates/.gitkeep
+corporate-planning/requests/*.md
+!corporate-planning/requests/.gitkeep
+corporate-planning/reports/*.md
+!corporate-planning/reports/.gitkeep
+
+# リサーチ実調査
+research/trend-research/*.md
+!research/trend-research/.gitkeep
+research/competitor-analysis/*.md
+!research/competitor-analysis/.gitkeep
+research/requests/*.md
+!research/requests/.gitkeep
+research/reports/**
+!research/reports/.gitkeep
+
+# 学習履歴・ToDo（個人）
+tasks/lessons.md
+tasks/todo.md
+
+# ============================================
+# ログ・状態ファイル
+# ============================================
+watcher.log
+.watcher-last-scan
+.watcher-last-scan.next
+*.log
+
+# ============================================
+# Node.js / Web 開発
+# ============================================
+node_modules/
+.next/
+dist/
+build/
+.cache/
+*.tsbuildinfo
+
+# ============================================
+# OS / エディタ
+# ============================================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/*.local.json
