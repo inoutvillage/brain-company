@@ -47,14 +47,32 @@ cd my-company
 # .vscode/tasks.json の `<YOUR_PATH>` を実パスに置換
 ```
 
-### 2. 個人情報の追加
+### 2. 個人情報・外部連携の追加
 ```bash
 # 社長プロフィールを作成（git管理外）
-cp ceo-office/profile.md.example ceo-office/profile.md   # （無ければ新規作成）
+cp ceo-office/profile.md.example ceo-office/profile.md
 
-# Slack 連携する場合
+# Slack や MCP 連携設定のベースを作成
 cp .mcp.json.example .mcp.json
-# .mcp.json に Bot Token を設定
+```
+
+#### Slack 連携
+`.mcp.json` に Slack Bot Token を設定することで連携可能です。
+
+#### Google カレンダー連携
+Claude Pro等のサブスクリプション環境では、**Claude.ai（Web版）の設定画面（Integrations）からGoogleアカウントを連携するだけ**で、Claude Code (CLI) にも自動的に連携が引き継がれます（`.mcp.json` の設定は不要です）。
+
+※ ローカルで独自に設定を管理する場合のみ、以下を `.mcp.json` に追記してください。
+```json
+"google-calendar": {
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-google-calendar"],
+  "env": {
+    "GOOGLE_CLIENT_ID": "<YOUR_CLIENT_ID>",
+    "GOOGLE_CLIENT_SECRET": "<YOUR_CLIENT_SECRET>",
+    "GOOGLE_REFRESH_TOKEN": "<YOUR_REFRESH_TOKEN>"
+  }
+}
 ```
 
 ### 3. 起動
