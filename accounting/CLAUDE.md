@@ -83,26 +83,38 @@
 
 ## ファイル構成
 
+### デフォルト（本体事業のみ）
+```
+accounting/
+├── CLAUDE.md
+├── records/
+│   └── YYYY-MM.md           ← 本体事業の月次（サブフォルダ不要）
+└── analysis-reports/
+    └── YYYY-MM_月次分析.md
+```
+
+### 事業部を追加した場合（複数事業部）
 ```
 accounting/
 ├── CLAUDE.md
 ├── records/                     ← 事業部別に分離
 │   ├── business-unit-1/YYYY-MM.md  ← 本体事業の月次
-│   ├── business-unit-3/YYYY-MM.md   ← 配信事業の月次
-│   ├── business-unit-2/YYYY-MM.md   ← ゲーム事業の月次
+│   ├── business-unit-2/YYYY-MM.md  ← サブブランド A の月次
+│   ├── business-unit-3/YYYY-MM.md  ← サブブランド B の月次（あれば）
 │   └── all/YYYY-MM.md           ← 全社合算月次
 └── analysis-reports/             ← 事業部別に分離
     ├── business-unit-1/YYYY-MM_月次分析.md
-    ├── business-unit-3/YYYY-MM_月次分析.md
     ├── business-unit-2/YYYY-MM_月次分析.md
+    ├── business-unit-3/YYYY-MM_月次分析.md
     └── all/YYYY-MM_月次分析.md
 ```
 
 ### 事業部別運用ルール
-- 売上・経費は発生した事業部のフォルダに記録
+- **本体事業のみの環境**: サブフォルダを作らず `records/YYYY-MM.md` 等に直接配置
+- **複数事業部の環境**: 売上・経費は発生した事業部のフォルダに記録
 - 事業部をまたぐ経費（共通サブスク等）は `all/` に記録し、必要なら按分
-- 月次分析は**事業部別 + 全社合算の両方**を作成
-- 事業部: `business-unit-1`（本体）／`business-unit-3`（配信）／`business-unit-2`（ゲーム）／`all`（全社）
+- 月次分析は**事業部別 + 全社合算の両方**を作成（事業部が複数ある場合）
+- 事業部 ID は `business-unit-1`, `business-unit-2`, … と数字で連番（実際のブランド名は `ceo-office/profile.md` の事業部表で対応付け）
 
 ### 月次記録テンプレート (records/{事業部}/YYYY-MM.md)
 ```markdown

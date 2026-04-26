@@ -11,9 +11,9 @@ graph TD
     end
     PM["📊 プロダクトマネジメント部<br/>product-management<br/>進捗管理・調整"]
     RES["🔍 リサーチ部<br/>research<br/>市場・競合調査"]
-    MKT["📣 マーケティング部<br/>marketing<br/>集客・SNS運用<br/>※事業部別管理"]
+    MKT["📣 マーケティング部<br/>marketing<br/>集客・SNS運用<br/>※事業部別管理（複数時）"]
     DEV["💻 開発部<br/>development<br/>個人開発実装"]
-    ACC["💰 経理部<br/>accounting<br/>収支管理・分析<br/>※事業部別管理"]
+    ACC["💰 経理部<br/>accounting<br/>収支管理・分析<br/>※事業部別管理（複数時）"]
     LEG["⚖️ 法務部<br/>legal<br/>契約・法人・コンプラ<br/>労務・行政手続き"]
     CP["🎯 経営企画部<br/>corporate-planning<br/>事業計画・戦略立案<br/>統合編集"]
 
@@ -61,26 +61,42 @@ graph TD
     class REF util
 ```
 
-## 事業部構造
+## 事業部構造（デフォルト: 本体事業のみ）
 
 ```mermaid
 graph LR
     COMP["🏢 <YOUR_COMPANY>"]
     IOV["🎯 business-unit-1<br/>本体事業"]
-    SLV["📡 business-unit-3<br/>配信事務所事業"]
-    VGM["🎮 business-unit-2<br/>ゲーム制作事業"]
 
     COMP --> IOV
-    COMP --> SLV
-    COMP --> VGM
 
     classDef corp fill:#e0b0ff,stroke:#333,stroke-width:3px,color:#000
     classDef bu fill:#ffdab9,stroke:#333,stroke-width:2px,color:#000
     class COMP corp
-    class IOV,SLV,VGM bu
+    class IOV bu
 ```
 
-経理部・マーケ部は上記3事業部でサブフォルダ分離。
+事業部はあとから自由に追加可能（`business-unit-2`, `business-unit-3`, …）。
+追加すると **経理部・マーケ部のサブフォルダで自動的に分離管理** される。
+
+### 追加例（サブブランドを 2 つ持つ場合）
+
+```mermaid
+graph LR
+    COMP["🏢 <YOUR_COMPANY>"]
+    BU1["🎯 business-unit-1<br/>本体事業"]
+    BU2["📡 business-unit-2<br/>サブブランド A"]
+    BU3["🎮 business-unit-3<br/>サブブランド B"]
+
+    COMP --> BU1
+    COMP --> BU2
+    COMP --> BU3
+
+    classDef corp fill:#e0b0ff,stroke:#333,stroke-width:3px,color:#000
+    classDef bu fill:#ffdab9,stroke:#333,stroke-width:2px,color:#000
+    class COMP corp
+    class BU1,BU2,BU3 bu
+```
 
 ## 各部署の一行サマリー
 
@@ -141,17 +157,18 @@ graph LR
                     └─ 意見 ──▶ 秘書室 ──▶ 社長
 ```
 
-### パターンF: 事業部プロジェクト（business-unit-3 WEB等）
+### パターンF: 事業部プロジェクト（事業部を追加した場合）
 ```
 社長 ──▶ 秘書室 ──▶ PM部（事業部別プロジェクト）
                     ├─ 開発部（実装）
                     ├─ 法務部（PII・個人情報）
-                    ├─ マーケ部（business-unit-3/ 配下）
-                    └─ 経理部（business-unit-3/ 配下）
+                    ├─ マーケ部（business-unit-N/ 配下）
+                    └─ 経理部（business-unit-N/ 配下）
                             │
                             ▼
                     秘書室 ──▶ 社長（統合レポート）
 ```
+※ 事業部が本体（business-unit-1）のみの場合はサブフォルダを作らず直接配置可。
 
 ## 報告ライン
 - **通常時**: 部署 → 秘書室 → 社長
@@ -163,9 +180,10 @@ graph LR
 2. 依頼文書には「依頼元・依頼先・目的・期限・成果物形式」を明記
 3. 連携結果は**依頼元に返却**し、秘書室にもCC
 4. 複数部署連携はPM部が調整役
-5. 事業部別業務は必ず事業部サブフォルダ（business-unit-1/business-unit-3/business-unit-2）で区別
+5. **事業部が 2 つ以上ある場合のみ** 事業部別業務は事業部サブフォルダ（`business-unit-1/`, `business-unit-2/`, …）で区別
 
-## 事業部別運用ルール
-- マーケ部/経理部の出力は必ず**事業部サブフォルダに配置**
+## 事業部別運用ルール（事業部が複数ある場合）
+- マーケ部/経理部の出力は **発生した事業部サブフォルダに配置**（本体事業のみの環境ではサブフォルダ不要）
 - 事業部横断の企画は `all/`（経理）または明示的に「横断」とタグ付け
 - 月次/四半期レポートは事業部別 + 全社合算の両方を作成
+- 事業部追加手順は `docs/SETUP.md §9 カスタマイズ「部署を追加したい」` を参照

@@ -1,5 +1,5 @@
 {
-  "_comment": "Slack 連携が不要なら本ファイルは作成不要。必要なら .mcp.json として保存し、SLACK_BOT_TOKEN と SLACK_TEAM_ID を実際の値に置換すること。.gitignore で .mcp.json は除外済み。",
+  "_comment": "Claude.ai (Web) の Integrations で連携済みの場合は本ファイル不要。ローカルで個別に設定する場合のみ .mcp.json として保存し、各種トークンを実際の値に置換してください。",
   "mcpServers": {
     "slack": {
       "command": "npx",
@@ -7,6 +7,15 @@
       "env": {
         "SLACK_BOT_TOKEN": "xoxb-YOUR_TOKEN_HERE",
         "SLACK_TEAM_ID": "TYOUR_TEAM_ID"
+      }
+    },
+    "google-calendar": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-google-calendar"],
+      "env": {
+        "GOOGLE_CLIENT_ID": "YOUR_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET": "YOUR_CLIENT_SECRET",
+        "GOOGLE_REFRESH_TOKEN": "YOUR_REFRESH_TOKEN"
       }
     }
   }

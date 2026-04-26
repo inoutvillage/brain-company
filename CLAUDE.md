@@ -9,12 +9,16 @@
 > 詳細は **`ceo-office/profile.md`（ソース・オブ・トゥルース）** を参照。
 > 本ファイルには個人情報を重複記載しない。
 
-## 事業部（任意・3つ想定）
-- **business-unit-1**: 本体事業
-- **business-unit-2**: 副業/サブブランド1
-- **business-unit-3**: 副業/サブブランド2
+## 事業部（デフォルト: 本体事業のみ・追加可）
+- **business-unit-1**: 本体事業 ← デフォルトはこれ 1 つだけ
 
-→ 必要なら CLAUDE.md と各部署の事業部別フォルダ構造を編集。
+サブブランドや別事業を持つ場合は `business-unit-2`, `business-unit-3`, … と追加可能。
+追加した時:
+- `marketing/` `accounting/` 配下に同名サブフォルダを作って分離管理
+- `org-chart.md` の「事業部構造」mermaid に行を追加
+- `ceo-office/profile.md` の事業部表に行を追加
+
+事業部が **本体のみ** の場合は `marketing/` `accounting/` 配下のサブフォルダ作成は不要（直接 `marketing/sns-operations/YYYY-MM-DD_*.md` 等に配置）。
 
 ## ビジョン（テンプレ）
 > 「AI社員と共に、個人の力を最大化する」

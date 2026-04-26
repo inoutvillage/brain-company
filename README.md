@@ -38,17 +38,32 @@ Claude Code 上で動く **AI 社員擬似会社** のテンプレート。
 - tmux
 - bash 4+
 
-### 1. clone & setup
+### 1. clone
 ```bash
 git clone https://github.com/mitsubacha/brain-company.git my-company
 cd my-company
-
-# パス設定（後述の SETUP.md 参照）
-# .vscode/tasks.json の `<YOUR_PATH>` を実パスに置換
 ```
 
-### 2. 個人情報・外部連携の追加
+### 2. 初期セットアップ
+
+> 💡 **推奨: `/company-setup` スキルで対話的に完了**
+>
+> ```bash
+> claude --dangerously-skip-permissions
+> ```
+> セッション内で `/company-setup` と入力するだけで、会社名・CEO ハンドル・事業部・tmux セッション名等を質問形式で答えていくと、以下が自動生成されます:
+> - `.vscode/tasks.json` の `<YOUR_PATH>` 一括置換
+> - `CLAUDE.md` `org-chart.md` の会社名・CEO ハンドル置換
+> - `ceo-office/profile.md` 生成（任意・個人情報入力時のみ）
+>
+> 最後に VS Code タスク（秘書独立起動 + 全部署一斉起動）の手順案内まで自動。
+> Slack 連携など API キーが必要なものは `docs/SETUP.md §6` を参照。
+
+#### 手動でセットアップする場合
 ```bash
+# .vscode/tasks.json の <YOUR_PATH> を実パスに置換
+sed -i "s|<YOUR_PATH>|$(pwd)|g" .vscode/tasks.json
+
 # 社長プロフィールを作成（git管理外）
 cp ceo-office/profile.md.example ceo-office/profile.md
 
@@ -56,13 +71,17 @@ cp ceo-office/profile.md.example ceo-office/profile.md
 cp .mcp.json.example .mcp.json
 ```
 
-#### Slack 連携
-`.mcp.json` に Slack Bot Token を設定することで連携可能です。
+詳細は [docs/SETUP.md](docs/SETUP.md)。
 
-#### Google カレンダー連携
-Claude Pro等のサブスクリプション環境では、**Claude.ai（Web版）の設定画面（Integrations）からGoogleアカウントを連携するだけ**で、Claude Code (CLI) にも自動的に連携が引き継がれます（`.mcp.json` の設定は不要です）。
+#### 外部連携（Slack・Googleカレンダー等）
+Claude Pro等のサブスクリプション環境を利用している場合、基本的には **Claude.ai（Web版）の設定画面（Integrations）から各サービスを連携するだけ**で、Claude Code (CLI) にも自動的に連携が反映されます（`.mcp.json` の設定は不要です）。
 
-※ ローカルで独自に設定を管理する場合のみ、以下を `.mcp.json` に追記してください。
+※ ローカルで個別にMCP連携を管理したい場合のみ、以下を参考に `.mcp.json` へ追記してください。
+
+**Slack 手動設定例**
+`.mcp.json` に Slack Bot Token などを直接設定します。
+
+**Google カレンダー 手動設定例**
 ```json
 "google-calendar": {
   "command": "npx",

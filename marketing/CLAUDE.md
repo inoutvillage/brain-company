@@ -74,6 +74,18 @@
 
 ## ファイル構成
 
+### デフォルト（本体事業のみ）
+```
+marketing/
+├── CLAUDE.md
+├── sns-operations/
+│   ├── YYYY-MM-DD_媒体_件名.md
+│   └── analytics/YYYY-MM_月次分析.md
+└── content-planning/
+    └── YYYY-MM_企画.md
+```
+
+### 事業部を追加した場合（複数事業部）
 ```
 marketing/
 ├── CLAUDE.md
@@ -81,22 +93,23 @@ marketing/
 │   ├── business-unit-1/
 │   │   ├── YYYY-MM-DD_媒体_件名.md
 │   │   └── analytics/YYYY-MM_月次分析.md
-│   ├── business-unit-3/
+│   ├── business-unit-2/
 │   │   ├── YYYY-MM-DD_媒体_件名.md
 │   │   └── analytics/YYYY-MM_月次分析.md
-│   └── business-unit-2/
+│   └── business-unit-3/
 │       ├── YYYY-MM-DD_媒体_件名.md
 │       └── analytics/YYYY-MM_月次分析.md
 └── content-planning/                    ← 事業部別
     ├── business-unit-1/YYYY-MM_企画.md
-    ├── business-unit-3/YYYY-MM_企画.md
-    └── business-unit-2/YYYY-MM_企画.md
+    ├── business-unit-2/YYYY-MM_企画.md
+    └── business-unit-3/YYYY-MM_企画.md
 ```
 
 ### 事業部別運用ルール
-- 投稿原稿・企画・効果測定は**発信主体の事業部サブフォルダ**に配置
+- **本体事業のみの環境**: サブフォルダを作らず `sns-operations/YYYY-MM-DD_*.md` 等に直接配置
+- **複数事業部の環境**: 投稿原稿・企画・効果測定は**発信主体の事業部サブフォルダ**に配置
 - 事業部をまたぐキャンペーン（例: 全社公式アカウント）は `business-unit-1/` の本体事業に置く
-- 事業部: `business-unit-1`（本体）／`business-unit-3`（配信事務所）／`business-unit-2`（ゲーム）
+- 事業部 ID は `business-unit-1`, `business-unit-2`, … と数字で連番（実際のブランド名は `ceo-office/profile.md` の事業部表で対応付け）
 
 ### Xポストテンプレート
 ```markdown
