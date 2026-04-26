@@ -132,32 +132,32 @@ test -f ceo-office/profile.md
 
 ### Step 5. サマリー確認
 
-ここまで集めた値を**読みやすく整形して社長に提示**:
+ここまで集めた値を**読みやすく整形して社長に提示**（以下のフォーマットの `<...>` 部分に Step 1〜4 で収集した実値を埋めて表示すること。SKILL.md のサンプル出力には個人情報・実プロジェクトパスをハードコードしない）:
 
 ```
 以下の内容で適用します:
 
-【プロジェクトパス】 <PROJECT_PATH>
-【会社名】 <YOUR_COMPANY>
-【CEOハンドル】 <CEO_HANDLE>
+【プロジェクトパス】 <PROJECT_PATH>            ← Step 0-3 で pwd から取得
+【会社名】          <YOUR_COMPANY>            ← Step 1-1
+【CEOハンドル】     <CEO_HANDLE>              ← Step 1-2
 
-【プロフィール】 作成する
-  - 本名: <REAL_NAME> (<よみがな>)
-  - メール: example@example.com
-  - GitHub: <GITHUB_USERNAME>
-  - Git identity: <GITHUB_USERNAME> <example@example.com>
+【プロフィール】 作成する / スキップ
+  - 本名:        <REAL_NAME> (<よみがな>)
+  - メール:      <EMAIL>
+  - GitHub:      <GITHUB_USERNAME>
+  - Git identity: <GIT_IDENTITY>
 
 【事業部】
-  - business-unit-1 (本体): <BU1_NAME> — 個人開発・コンテンツ制作
-  - 追加事業部: なし（必要に応じて後から追加可）
+  - business-unit-1 (本体): <BU1_NAME> — <BU1_DESC>
+  - 追加事業部: なし / <BU2_NAME>, <BU3_NAME> 等
 
-【tmuxセッション名】 brain-company (デフォルト)
+【tmuxセッション名】 <TMUX_SESSION>           ← デフォルト brain-company
 
 【影響を受けるファイル】
   - .vscode/tasks.json (13箇所)
   - CLAUDE.md (5箇所 + 事業部セクション更新)
   - org-chart.md (2箇所 + 事業部 mermaid 更新)
-  - ceo-office/profile.md (新規作成)
+  - ceo-office/profile.md (新規作成、プロフィール作成時のみ)
 
 この内容で適用してよろしいですか？(yes/no/修正したい)
 ```
