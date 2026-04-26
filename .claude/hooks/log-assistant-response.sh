@@ -23,19 +23,54 @@ INPUT=$(cat)
 TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path // ""')
 CWD=$(echo "$INPUT" | jq -r '.cwd // ""')
 
-# 部署判定（CLAUDE_PROJECT_DIR/<dept>/ 配下なら <dept> を抽出、ルートは secretariat 扱い）
-case "$CWD" in
-  "${CLAUDE_PROJECT_DIR}"|"${CLAUDE_PROJECT_DIR}/")
+# 部署判定:
+#   セッション開始時の cwd（transcript_path のディレクトリ名にエンコードされている）から判定する。
+#   メッセージ送信時の cwd は使わない（cd で他部署フォルダに出張すると誤ルーティングする）。
+#   詳細は log-user-prompt.sh のコメント参照。
+PROJECT_BASENAME="$(basename "$CLAUDE_PROJECT_DIR")"
+DEPT=""
+
+if [ -n "$TRANSCRIPT" ] && [ "$TRANSCRIPT" != "null" ]; then
+  ENCODED_DIR="$(basename "$(dirname "$TRANSCRIPT")")"
+  SUFFIX="${ENCODED_DIR##*-${PROJECT_BASENAME}}"
+  SUFFIX="${SUFFIX#-}"
+  if [ -z "$SUFFIX" ]; then
     DEPT="secretariat"
-    ;;
-  "${CLAUDE_PROJECT_DIR}/"*)
-    REL="${CWD#${CLAUDE_PROJECT_DIR}/}"
-    DEPT="${REL%%/*}"
-    case "$DEPT" in
-      .*) exit 0 ;;
-    esac
-    ;;
-  *) exit 0 ;;
+  else
+    for d in "$CLAUDE_PROJECT_DIR"/*/; do
+      [ -d "$d" ] || continue
+      name="$(basename "$d")"
+      case "$name" in .*) continue ;; esac
+      case "$SUFFIX" in
+        "$name"|"${name}-"*)
+          if [ "${#name}" -gt "${#DEPT}" ]; then
+            DEPT="$name"
+          fi
+          ;;
+      esac
+    done
+  fi
+fi
+
+# フォールバック: cwd ベース判定
+if [ -z "$DEPT" ]; then
+  case "$CWD" in
+    "${CLAUDE_PROJECT_DIR}"|"${CLAUDE_PROJECT_DIR}/")
+      DEPT="secretariat"
+      ;;
+    "${CLAUDE_PROJECT_DIR}/"*)
+      REL="${CWD#${CLAUDE_PROJECT_DIR}/}"
+      DEPT="${REL%%/*}"
+      case "$DEPT" in
+        .*) exit 0 ;;
+      esac
+      ;;
+    *) exit 0 ;;
+  esac
+fi
+
+case "$DEPT" in
+  .*|"") exit 0 ;;
 esac
 
 # 第1優先: hook 入力の last_assistant_message（Claude Code が turn 完了時の生 text を提供）
