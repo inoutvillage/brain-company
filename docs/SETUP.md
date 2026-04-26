@@ -29,7 +29,7 @@
 ## 1. リポジトリ取得
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/your-company-template.git my-company
+git clone https://github.com/YOUR_USERNAME/brain-company.git my-company
 cd my-company
 ```
 
@@ -86,7 +86,7 @@ cp ceo-office/profile.md.example ceo-office/profile.md
 
 ## 5. tmux セッション名（任意）
 
-デフォルトは `your-company`。変えたい場合:
+デフォルトは `brain-company`。変えたい場合:
 
 ```bash
 # .bashrc または .zshrc に追加
@@ -147,7 +147,7 @@ claude mcp list
 ### 全部署 tmux 一括起動
 ```bash
 ./start-agents-all.sh
-tmux attach -t your-company  # または $TMUX_SESSION
+tmux attach -t brain-company  # または $TMUX_SESSION
 ```
 
 これで 9 ウィンドウ（pm/dev/watcher/extractor/research/marketing/accounting/legal/ceo-office/corporate-planning）が立ち上がります。
@@ -168,7 +168,7 @@ claude --dangerously-skip-permissions
 tmux の `watcher` ウィンドウに以下が表示されているか:
 ```
 [watcher] start polling (...)
-[watcher] tmux session target: your-company
+[watcher] tmux session target: brain-company
 ```
 
 ### 8-2. 部署間通信テスト
@@ -201,7 +201,7 @@ tmux の `watcher` ウィンドウに以下が表示されているか:
 ### Q. tmux 起動しない
 - `tmux` コマンドが install されているか確認
 - 既存セッションがないか: `tmux ls`
-- 既にあれば: `tmux kill-session -t your-company`
+- 既にあれば: `tmux kill-session -t brain-company`
 
 ### Q. claude コマンドが見つからない
 - Claude Code CLI を [公式](https://claude.com/claude-code) からインストール

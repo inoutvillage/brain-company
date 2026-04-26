@@ -1,4 +1,4 @@
-# Your Company — AI Organization Template
+# Brain Company — AI Organization Template
 
 Claude Code 上で動く **AI 社員擬似会社** のテンプレート。
 一人社長の業務を AI チームに委任し、複数の AI エージェントが部署として協働する仕組み。
@@ -40,7 +40,7 @@ Claude Code 上で動く **AI 社員擬似会社** のテンプレート。
 
 ### 1. clone & setup
 ```bash
-git clone https://github.com/YOUR/your-company-template.git my-company
+git clone https://github.com/mitsubacha/brain-company.git my-company
 cd my-company
 
 # パス設定（後述の SETUP.md 参照）

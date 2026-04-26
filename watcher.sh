@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# watcher.sh - Your Company ファイル監視デーモン（ポーリング版）
+# watcher.sh - Brain Company ファイル監視デーモン（ポーリング版）
 #
 # 役割:
 #   各部署の依頼/チケット/報告ディレクトリをポーリングし、
@@ -32,7 +32,7 @@ set -u
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # --- tmux セッション名（start-agents.sh と合わせる） ---
-SESSION="${TMUX_SESSION:-your-company}"
+SESSION="${TMUX_SESSION:-brain-company}"
 
 # --- 秘書 inbox ディレクトリ ---
 INBOX="$ROOT/secretariat/inbox"

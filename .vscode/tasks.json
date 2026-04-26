@@ -21,7 +21,7 @@
       "command": "wsl.exe",
       "args": [
         "bash", "-ic",
-        "cd <YOUR_PATH> && ./start-agents.sh && tmux attach -t your-company"
+        "cd <YOUR_PATH> && ./start-agents.sh && tmux attach -t brain-company"
       ],
       "presentation": {
         "reveal": "always",
@@ -35,7 +35,7 @@
       "command": "wsl.exe",
       "args": [
         "bash", "-ic",
-        "cd <YOUR_PATH> && ./start-agents-all.sh && tmux attach -t your-company"
+        "cd <YOUR_PATH> && ./start-agents-all.sh && tmux attach -t brain-company"
       ],
       "presentation": {
         "reveal": "always",
@@ -49,7 +49,7 @@
       "command": "wsl.exe",
       "args": [
         "bash", "-ic",
-        "tmux attach -t your-company"
+        "tmux attach -t brain-company"
       ],
       "presentation": {
         "reveal": "always",
@@ -63,7 +63,7 @@
       "command": "wsl.exe",
       "args": [
         "bash", "-ic",
-        "tmux kill-session -t your-company"
+        "tmux kill-session -t brain-company"
       ],
       "presentation": {
         "reveal": "always",

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# start-agents.sh - Your Company のメインエージェントを tmux で一括起動（秘書独立版）
+# start-agents.sh - Brain Company のメインエージェントを tmux で一括起動（秘書独立版）
 #
 # 役割:
 #   tmux セッション '$SESSION' を新規作成し、3ウィンドウ構成で
@@ -9,7 +9,7 @@
 # ※ 秘書（secretariat）は AntiGravity のターミナルで独立起動する運用のため、
 #   この tmux セッションには含まない。
 #   秘書を起動する場合は:
-#     cd .../Your Company/secretariat && claude --dangerously-skip-permissions
+#     cd .../Brain Company/secretariat && claude --dangerously-skip-permissions
 #   または .vscode/tasks.json の「🎧【秘書】独立起動」タスクを実行。
 #
 # 使い方:
@@ -26,7 +26,7 @@
 set -u
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SESSION="${TMUX_SESSION:-your-company}"
+SESSION="${TMUX_SESSION:-brain-company}"
 
 # --- 既存セッション確認 ---
 if tmux has-session -t "$SESSION" 2>/dev/null; then
@@ -66,7 +66,7 @@ fi
 # --- 秘書 inbox ディレクトリ確保 ---
 mkdir -p "$ROOT/secretariat/inbox"
 
-echo "▶ Starting Your Company agents in tmux session '$SESSION' (秘書は独立運用)..."
+echo "▶ Starting Brain Company agents in tmux session '$SESSION' (秘書は独立運用)..."
 
 # --- Window 0: pm ---
 tmux new-session -d -s "$SESSION" -n pm -c "$ROOT/product-management"

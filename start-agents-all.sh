@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# start-agents-all.sh - Your Company 全部署を tmux で一括起動
+# start-agents-all.sh - Brain Company 全部署を tmux で一括起動
 #
 # 役割:
 #   tmux セッション '$SESSION' を新規作成し、9ウィンドウ構成で
@@ -31,7 +31,7 @@
 set -u
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SESSION="${TMUX_SESSION:-your-company}"
+SESSION="${TMUX_SESSION:-brain-company}"
 
 # --- 既存セッション確認 ---
 if tmux has-session -t "$SESSION" 2>/dev/null; then
@@ -74,7 +74,7 @@ fi
 # --- 秘書 inbox ディレクトリ確保 ---
 mkdir -p "$ROOT/secretariat/inbox"
 
-echo "▶ Starting Your Company ALL departments in tmux session '$SESSION'..."
+echo "▶ Starting Brain Company ALL departments in tmux session '$SESSION'..."
 
 # --- Window 0: pm ---
 tmux new-session -d -s "$SESSION" -n pm -c "$ROOT/product-management"

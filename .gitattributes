@@ -1,0 +1,13 @@
+# 改行コードの統一
+# Windows の Git for Windows はデフォルト core.autocrlf=true で .sh を CRLF に変換する。
+# CRLF 化されたシェルスクリプトを WSL/macOS/Linux で実行すると
+# `/bin/bash^M: bad interpreter: No such file or directory` で起動失敗する。
+# このリポジトリでは .sh / .bash / YAML を LF 固定にする。
+
+*.sh         text eol=lf
+*.bash       text eol=lf
+*.yml        text eol=lf
+*.yaml       text eol=lf
+
+# その他のテキストファイルは Git に判断を任せる
+* text=auto
