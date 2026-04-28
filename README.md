@@ -135,14 +135,6 @@ cd secretariat && claude --dangerously-skip-permissions
 
 ---
 
-## 🤝 Contributing
-
-カスタマイズ歓迎。fork して自社用に改造してください。
-本テンプレートへのフィードバック・PR は issue 経由で。
-
----
-
 ## 🙏 Credits
 
 Powered by [Claude Code](https://claude.com/claude-code) (Anthropic)
-インスピレーション: 「Claude Code Company」動画ワークフロー
