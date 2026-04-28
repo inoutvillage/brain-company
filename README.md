@@ -105,6 +105,23 @@ cd secretariat && claude --dangerously-skip-permissions
 
 詳細セットアップは [docs/SETUP.md](docs/SETUP.md)。
 
+### 💡 推奨設定: Remote Control を有効化
+
+秘書室は社長の対話の主窓口として **常時稼働** するエージェントです。本テンプレートを最大限活かすには、**スマホ・外出先からも秘書セッションへ指示が飛ばせる状態** が極めて有用です。
+
+Claude Code の **「Enable Remote Control for all sessions」を `true`** に設定することを **強く推奨** します:
+
+- `/config` コマンドで設定画面を開いて有効化
+- または `~/.claude/settings.json` に直接以下を追記:
+
+```json
+{
+  "remoteControlAtStartup": true
+}
+```
+
+これにより claude.ai / モバイルアプリから自分のセッションへリモート接続でき、移動中・外出先でも秘書に指示・状況確認が可能になります。**いつでも秘書がそばにいる** という本テンプレートの設計思想と完全に整合する設定です。
+
 ---
 
 ## 🏗 アーキテクチャ
