@@ -40,7 +40,7 @@ Claude Code 上で動く **AI 社員擬似会社** のテンプレート。
 
 ### 1. clone
 ```bash
-git clone https://github.com/mitsubacha/brain-company.git my-company
+git clone https://github.com/inoutvillage/brain-company.git my-company
 cd my-company
 ```
 
