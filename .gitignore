@@ -105,10 +105,12 @@ watcher.log
 .watcher-last-scan
 .watcher-last-scan.next
 *.log
-# 日次の自動抽出（.claude/scripts/extract-actions-daily.sh）の状態・連続失敗の数・通知の重複防止の印
+# 日次の自動抽出（.claude/scripts/extract-actions-daily.sh）の状態・連続失敗の数
 .claude/extract-cron.state
 .claude/extract-cron.failcount
-secretariat/logs/.extractor-unavailable
+# hook が書く作業の記録（Bash の実行・Write/Edit の対象・抽出の実行）と、通知の重複防止の印。
+# 書く側が mkdir -p するので、フォルダごと git の外に置く
+secretariat/logs/
 
 # ============================================
 # Node.js / Web 開発
