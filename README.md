@@ -9,14 +9,17 @@ Claude Code 上で動く **AI 社員擬似会社** のテンプレート。
 
 ## 🎯 何ができるか
 
-- **9 部署 × 独立 AI エージェント** が並列稼働
+- **8 つの独立 AI エージェント**（秘書室 ＋ 7 部署）が tmux で並列稼働
 - **秘書室を玄関口** に、社長の指示を構造化・部署別に振り分け
 - **watcher.sh** がファイル監視して部署間の依頼・報告を tmux 経由で自動配信
+- **起動のたびに前の会話から再開**（部署ごとの文脈が消えない。白紙で起こすことも可）
+- **会話ログから ToDo・意思決定・思考メモを毎日自動で抽出**（cron。任意）
+- **セッションの一覧の画面**（動いている全セッションの状態をブラウザの 1 枚に並べる。Linux / WSL2）
 - **各種 MCP 連携**（Slack / Google Calendar / Gmail 等）で更に便利に拡張可能
 - **再帰的な戦略立案ループ**（サブエージェント多重起動による深掘り分析）
 
 ### 部署一覧
-- 👑 **ceo-office**: 意思決定・ビジョン
+- 👑 **ceo-office**: 意思決定・ビジョン（常駐エージェントは置かず、記録の保管場所。書き込みは秘書室）
 - 📋 **secretariat**: 全タスクの玄関口
 - 📊 **product-management**: プロジェクト管理
 - 💻 **development**: 個人開発実装
@@ -34,9 +37,13 @@ Claude Code 上で動く **AI 社員擬似会社** のテンプレート。
 
 ### 必要環境
 - Linux / macOS / WSL2（推奨）
+  - 日次の自動抽出とセッションの一覧の画面は **Linux / WSL2 だけ**（`/proc` と GNU の `date` を使う）
 - [Claude Code CLI](https://claude.com/claude-code) インストール済み
 - tmux
 - bash 4+
+- jq（hook が Claude Code からの入力を読むのに使う）
+- python3（前の会話から再開する仕組みが使う。無ければ毎回新しい会話で起動する）
+  - 再開は Linux / WSL2 だけ。`/proc` が無い PC（macOS 等）では、その会話がほかで使用中かを確かめられないので、毎回新しい会話で起動する
 
 ### 1. clone
 ```bash
@@ -56,7 +63,7 @@ cd my-company
 > - `CLAUDE.md` `org-chart.md` の会社名・CEO ハンドル置換
 > - `ceo-office/profile.md` 生成（任意・個人情報入力時のみ）
 >
-> 最後に VS Code タスク（秘書独立起動 + 全部署一斉起動）の手順案内まで自動。
+> 最後に VS Code タスク（🚀【一斉】起動 & アタッチ）の手順案内まで自動。
 > Slack 連携など API キーが必要なものは `docs/SETUP.md §6` を参照。
 
 #### 手動でセットアップする場合
@@ -96,12 +103,15 @@ Claude Pro等のサブスクリプション環境を利用している場合、�
 
 ### 3. 起動
 ```bash
-# 全部署 tmux 一括起動
-./start-agents-all.sh
-
-# 別ターミナルで秘書室を独立起動
-cd secretariat && claude --dangerously-skip-permissions
+# 秘書室（専用の tmux セッション）→ 全部署 の順に起こし、秘書に接続する
+./start-secretariat.sh --no-attach && ./start-agents-all.sh && tmux attach -t =brain-company-secretariat
 ```
+
+- VS Code なら `.vscode/tasks.json` の「🚀【一斉】起動 & アタッチ」で同じことができます
+- 秘書は `brain-company-secretariat`、部署は `brain-company` の 2 つの tmux セッションで動きます。ターミナルを閉じても止まりません
+- 各エージェントは、その部署の前の会話から再開します。白紙で起こすなら `CLAUDE_FRESH=1` を前に付けます
+- 止める: `tmux kill-session -t =brain-company; tmux kill-session -t =brain-company-secretariat`（`=` は完全一致の指定）
+- 日次の自動抽出（cron）の入れ方は [docs/SETUP.md](docs/SETUP.md) の「日次の自動抽出」を参照
 
 > ⚠️ **`--dangerously-skip-permissions` フラグについて**
 >
@@ -141,7 +151,7 @@ Claude Code の **「Enable Remote Control for all sessions」を `true`** に�
 - 各部署は独立した Claude Code セッションで稼働
 - 部署間通信はファイルシステム経由（`requests/` `reports/`）
 - watcher.sh が新規ファイルを検知して関連部署に tmux send-keys で通知
-- 秘書室は AntiGravity（VS Code 互換）の独立ターミナル運用
+- 秘書室は部署とは別の専用 tmux セッションで常駐（部署側を止めても生き残る）。部署からの報告は `secretariat/inbox/` に届く
 
 詳細は [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 

@@ -190,7 +190,7 @@ accounting/
 本部署は **独立したメインエージェント** として、必要時にオンデマンド起動する運用。詳細は `ceo-office/decisions/2026-04-21_組織設計-メインエージェント化.md` を参照。
 
 ### 起動方法
-- `.vscode/tasks.json` の「経理: Claude Code 起動(個別)」タスクを実行
+- `.vscode/tasks.json` の「経理: Claude Code 起動（個別）」タスクを実行
 - または手動で `cd accounting && claude --dangerously-skip-permissions`
 
 ### 入力: 依頼の受け付け

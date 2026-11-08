@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""セッションの一覧の画面
+
+  session-board serve [--port 18790] [--demo]   画面を出す（127.0.0.1 だけ）
+  session-board check                            本物を集めて、数だけを出す（中身は出さない）
+
+番号の既定は SESSION_BOARD_PORT（無ければ 18790）。ほかの設定は README の表を見る。
+"""
+import os
+import sys
+
+# 版が足りない時は、読み込みで分かりにくく落ちる前に、ここで止める（このファイルは古い版でも読める書き方だけにする。f 文字列は使わない）
+if sys.version_info < (3, 9):
+    sys.stderr.write("session-board は Python 3.9 以上で動きます（今は %s）。PYTHON=python3.11 などで版を指定してください\n"
+                     % sys.version.split()[0])
+    sys.exit(2)
+
+import argparse  # noqa: E402
+import collections  # noqa: E402
+import json  # noqa: E402
+import signal  # noqa: E402
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+from board import config, server  # noqa: E402
+from board.collect import collect  # noqa: E402
+
+
+def main() -> int:
+    try:
+        default_port = config.port()
+    except ValueError as e:
+        print(e, file=sys.stderr)
+        return 2
+    ap = argparse.ArgumentParser(prog="session-board")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    s = sub.add_parser("serve")
+    s.add_argument("--port", type=int, default=default_port)
+    s.add_argument("--demo", action="store_true", help="作り物の中身で出す（画面の写し・試し用）")
+    sub.add_parser("check")
+    a = ap.parse_args()
+
+    if a.cmd == "check":
+        cards, notes = collect()
+        colors = collections.Counter(c.color for c in cards)
+        fields = collections.Counter(k for c in cards for k in c.problems)
+        print(json.dumps({"cards": len(cards), "colors": colors, "unreadable_fields": fields,
+                          "codex": sum(1 for c in cards if c.codex), "notes": len(notes)}, ensure_ascii=False))
+        return 0
+
+    if a.demo:
+        import tempfile
+        from board.demo import demo_source
+        # 見本で隠した物は、本物の隠す一覧に書かない（一時の場所に置く）
+        srv = server.make_server(a.port, demo_source, banner="見本: 作り物の中身です（本物のセッションではありません）",
+                                 state_dir=tempfile.mkdtemp(prefix="session-board-demo-"))
+    else:
+        srv = server.make_server(a.port)
+    server.log("start port=%d demo=%s pid=%d" % (a.port, a.demo, os.getpid()))
+
+    def stop_on_term(*_):
+        raise KeyboardInterrupt  # board_ctl.sh stop（SIGTERM）でも、止めた行を残す
+
+    signal.signal(signal.SIGTERM, stop_on_term)
+    try:
+        srv.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.log("stop port=%d pid=%d" % (a.port, os.getpid()))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

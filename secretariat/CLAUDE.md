@@ -321,10 +321,22 @@ secretariat/
 
 秘書室は **社長直属のメインエージェント** として、他部署とは別セッションで常駐する運用が正式に決定された。詳細は `ceo-office/decisions/2026-04-21_組織設計-メインエージェント化.md` を参照。
 
-### 起動方法
-- AntiGravity (VS Code互換) の統合ターミナルで `cd secretariat && claude` を実行
-- または `.vscode/tasks.json` のタスク「**秘書: Claude Code 起動**」を呼ぶ
+### 起動方法（専用 tmux セッション）
+
+秘書室は **専用の tmux セッション `<TMUX_SESSION>-secretariat`**（既定 `brain-company-secretariat`）で常駐する。部署側のセッション（`brain-company`）とは分けてあるので、部署側を止めても・落ちても秘書は生き残る。ターミナルや VS Code を閉じてもセッションが生き続け、`tmux attach` で文脈を保ったまま再開できる。
+
+- `.vscode/tasks.json` のタスク「**🚀【一斉】起動 & アタッチ**」を呼ぶ（秘書 → 全部署の順に起こし、最後に秘書へ接続）。秘書だけ起こすなら「🎧【秘書】秘書だけ起動 & アタッチ」、終了 → 最新の会話から起こし直すなら「🔁【秘書】再起動」、止めるなら「🛑【一斉】停止」
+- または シェルから `cd <ROOT> && ./start-secretariat.sh`（冪等: 既に起動中なら再接続のみ）
+- 再接続だけなら `tmux attach -t =brain-company-secretariat`（`=` は完全一致。部署側の名前がこの名前の前方一致なので付ける）
+- デタッチは `Ctrl-b d`（セッションは生き続ける）／停止は `tmux kill-session -t =brain-company-secretariat`
+- 同じセッションの窓 `extractor` は会話ログからの自動抽出（`/extract-actions`）の送出先。落ちた時は「🧩【秘書】extractor 窓の補完」か `./start-secretariat.sh --no-attach`
 - 社長との対話の主窓口として常駐稼働が基本
+
+🚨 **手動で起動する場合も cwd は必ず `<ROOT>/secretariat`**。会話ログ hook は claude 起動時の cwd で部署判定するため、ここを外すと `memos/` への記録が無言で止まる。`--add-dir ..`（他部署ディレクトリの読み書き）も必須。
+
+⚠️ tmux が守るのは「ターミナルを閉じる」まで。PC の再起動や `wsl --shutdown` の後は起動し直す。
+
+🔁 起動は「この dir の最新の対話の会話から再開」（`.claude/scripts/claude-role.sh`。会話が無い・ほかで使用中・読めない時は新しい会話。白紙で起こすなら `CLAUDE_FRESH=1 ./start-secretariat.sh`、起動の後なら `/clear`）。🚨 **役割の dir（秘書室・各部署）と会社のフォルダーの一番上（extractor）で、一発の `claude`・`claude -p` を走らせない**（対話の一発は次の再開で拾われる。`-p` は選び方で飛ばすが記録は増える）。どうしても要る時は `--no-session-persistence` を付けるか、別の dir で。
 
 ### 入力: 社長からの指示
 - 入力源は **社長との直接対話**（このセッションに話しかけてもらう）
@@ -362,11 +374,13 @@ secretariat/
 
 ### 独立運用と inbox の仕組み（2026-04-22 追加）
 
-**秘書室は tmux セッションには含めない**。AntiGravity の独立ターミナルで起動する方針に決定（決定文書 `ceo-office/decisions/2026-04-21_組織設計-メインエージェント化.md` の「5.7 秘書の独立運用」参照）。
+**秘書室は部署側のセッション（`brain-company`）には含めない。専用セッション `brain-company-secretariat` で独立運用する**（上の「起動方法」）。部署側セッションと分離することで、部署側が全滅しても秘書は生き残る。
 
 #### `secretariat/inbox/` の役割
 
-watcher.sh（tmux 内で稼働）が、他部署の `reports/` に新規ファイルを検知した時、**秘書宛の通知メモ**をここに書き出す。秘書は tmux 外にいるため `tmux send-keys` が届かないので、ファイルシステム経由で情報を受け取る仕組み。
+watcher.sh（部署側セッション内で稼働）が、他部署の `reports/` に新規ファイルを検知した時、**秘書宛の通知メモ**をここに書き出す。watcher.sh は部署側セッションの window 名一致でしか `tmux send-keys` しないため、別セッションにいる秘書には届かない。そこでファイルシステム経由で情報を受け取る仕組み。
+
+> 🚫 watcher.sh を「秘書のセッションへ send-keys する」ように変えないこと。社長と対話している最中の入力欄に、知らせの文が割り込む。
 
 #### inbox ファイルの構造
 

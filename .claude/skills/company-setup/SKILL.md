@@ -1,6 +1,6 @@
 ---
 name: company-setup
-description: BrainCompany テンプレートを clone した直後に走らせる初回セットアップウィザード。会社名・CEO ハンドル・プロジェクトパス・事業部・tmux セッション名等を質問形式で対話的に収集し、`.vscode/tasks.json` `CLAUDE.md` `org-chart.md` `ceo-office/profile.md` 等のプレースホルダを一括置換する。最後に VS Code タスク（秘書独立起動 + 全部署一斉起動）の実行手順を案内する。起動例「セットアップして」「初期設定したい」「/company-setup」。冪等（再実行で既設定値を上書き可）。
+description: BrainCompany テンプレートを clone した直後に走らせる初回セットアップウィザード。会社名・CEO ハンドル・プロジェクトパス・事業部・tmux セッション名等を質問形式で対話的に収集し、`.vscode/tasks.json` `CLAUDE.md` `org-chart.md` `ceo-office/profile.md` 等のプレースホルダを一括置換する。最後に VS Code タスク（🚀【一斉】起動 & アタッチ）の実行手順を案内する。起動例「セットアップして」「初期設定したい」「/company-setup」。冪等（再実行で既設定値を上書き可）。
 ---
 
 # company-setup スキル
@@ -9,7 +9,7 @@ description: BrainCompany テンプレートを clone した直後に走らせ�
 
 BrainCompany テンプレートを clone した直後の社長が、**1 セッション内の質問応答だけで会社設定を完了**できるようにする。手動で `sed` を打つ・複数ファイルを横断編集する手間を排除する。
 
-最終ゴール: `.vscode/tasks.json` から「🎧【秘書】独立起動」「🏢【tmux】全部署 一斉起動」を押すだけで会社が動き出す状態にする。
+最終ゴール: `.vscode/tasks.json` から「🚀【一斉】起動 & アタッチ」を押すだけで会社が動き出す状態にする。
 
 ---
 
@@ -120,13 +120,14 @@ test -f ceo-office/profile.md
 
 ### Step 4. tmux セッション名（任意）
 
-社長に「tmux セッション名を変えますか？（デフォルト: `brain-company`）」と確認。
+社長に「tmux セッション名を変えますか？（デフォルト: 部署側 `brain-company`、秘書室はその後ろに `-secretariat`）」と確認。
 
 - **デフォルトのまま**: 何もしない。
-- **変更**: 新しい名前を質問（kebab-case 推奨）。Step 6 で以下を一括置換:
-  - `start-agents.sh`, `start-agents-all.sh`, `watcher.sh`
-  - `.vscode/tasks.json`（`tmux attach -t brain-company` 等）
-  - `.claude/hooks/on-stop.sh`（`SESSION="${TMUX_SESSION:-brain-company}"` のデフォルト値）
+- **変更**: 新しい名前を質問（kebab-case 推奨）。秘書室のセッション名は自動で `<新しい名前>-secretariat` になる。Step 6 で以下を一括置換:
+  - `start-agents.sh`, `start-agents-all.sh`, `start-secretariat.sh`, `watcher.sh`
+  - `.vscode/tasks.json`（`tmux attach -t =brain-company`・`=brain-company-secretariat` 等）
+  - `.claude/hooks/on-session-end.sh`, `.claude/scripts/extract-actions-daily.sh`（`SESSION="${TMUX_SESSION:-brain-company}-secretariat"` のデフォルト値。hook と cron は環境変数を持たないことがあるので、既定値の書き換えが要る）
+  - `tools/session-board/board/config.py` の `DEFAULT_TMUX_SESSION = "brain-company"` の行**だけ**（一覧の画面が部署側・秘書室のセッションを見分けるための既定値。同じファイルの置き場のパスにも `brain-company` があるが、`tools/board_ctl.sh` と揃えてあるので変えない）
 
 ---
 
@@ -151,10 +152,10 @@ test -f ceo-office/profile.md
   - business-unit-1 (本体): <BU1_NAME> — <BU1_DESC>
   - 追加事業部: なし / <BU2_NAME>, <BU3_NAME> 等
 
-【tmuxセッション名】 <TMUX_SESSION>           ← デフォルト brain-company
+【tmuxセッション名】 <TMUX_SESSION>           ← デフォルト brain-company（秘書室は <TMUX_SESSION>-secretariat）
 
 【影響を受けるファイル】
-  - .vscode/tasks.json (13箇所)
+  - .vscode/tasks.json (16箇所)
   - CLAUDE.md (5箇所 + 事業部セクション更新)
   - org-chart.md (2箇所 + 事業部 mermaid 更新)
   - ceo-office/profile.md (新規作成、プロフィール作成時のみ)
@@ -198,7 +199,8 @@ test -f ceo-office/profile.md
 tmux セッション名変更がある場合のみ追加:
 | ファイル | 置換 |
 |---|---|
-| `start-agents.sh`, `start-agents-all.sh`, `watcher.sh`, `.vscode/tasks.json`, `.claude/hooks/on-stop.sh` | リテラル `brain-company` → 新セッション名 |
+| `start-agents.sh`, `start-agents-all.sh`, `start-secretariat.sh`, `watcher.sh`, `.vscode/tasks.json`, `.claude/hooks/on-session-end.sh`, `.claude/scripts/extract-actions-daily.sh` | リテラル `brain-company` → 新セッション名（`brain-company-secretariat` も `<新セッション名>-secretariat` になる） |
+| `tools/session-board/board/config.py` | `DEFAULT_TMUX_SESSION = "brain-company"` の行だけ → 新セッション名（置き場のパスの `brain-company` は変えない） |
 
 #### 6-2. profile.md 生成（作成選択時のみ）
 
@@ -244,22 +246,27 @@ test -f ceo-office/profile.md && echo "✓ profile.md created"
 
 1. コマンドパレット (Ctrl+Shift+P) → "Tasks: Run Task" を開く
 
-2. 以下の **2つ** を順に実行:
-
-   ① 🎧【秘書】独立起動（最初にこれ）
-      → 専用ターミナルで秘書室の Claude Code セッションが起動。
-        社長との対話の主窓口になります。
-
-   ② 🏢【tmux】全部署 一斉起動 & アタッチ（秘書は別途）
-      → tmux で 9 ウィンドウ（pm/dev/watcher/extractor/research/
-        marketing/accounting/legal/ceo-office/corporate-planning）
-        が並列起動 → そのままアタッチ。
+2. 🚀【一斉】起動 & アタッチ（秘書 → 全部署。最後に秘書へ接続。最初にこれ）を実行
+   → 秘書室の専用 tmux セッション（<TMUX_SESSION>-secretariat: secretariat / extractor）と、
+     部署側のセッション（<TMUX_SESSION>: pm / dev / watcher / research /
+     marketing / accounting / legal / corporate-planning の 8 窓）が起動し、
+     秘書に接続します。秘書が社長との対話の主窓口です。
+   → 社長室（ceo-office）は常駐させません（記録の保管場所。書き込みは秘書室）
+   → 2 回目以降は、各エージェントが前の会話から再開します（白紙で起こすなら CLAUDE_FRESH=1）
 
 3. tmux ウィンドウの切替: Ctrl+b → 数字キー
+   部署の窓を見る: 🔗【tmux】部署の窓にアタッチのみ ／ 止める: 🛑【一斉】停止
 
 4. 動作確認:
    - 秘書セッションで「テスト依頼を PM に投げて」と発話
    - watcher が検知 → tmux:pm に通知が飛ぶ
+
+▼ 会話ログからの日次の自動抽出（任意・Linux / WSL2）
+秘書は常駐するので、抽出は cron で毎日送るのが主経路です。
+docs/SETUP.md §7.5 を参照（有効化 1 行 ＋ crontab 1 行）。
+
+▼ セッションの一覧の画面（任意・Linux / WSL2）
+全部署の起動と一緒に起きます。📋【一覧】セッションの一覧の画面をブラウザで開く。
 
 ▼ Slack 連携（任意）
 docs/SETUP.md §6 を参照（Bot Token 取得 → .mcp.json 作成）。

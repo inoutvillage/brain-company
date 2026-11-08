@@ -134,7 +134,7 @@ development/
 
 ### 起動方法
 - AntiGravity (VS Code互換) の統合ターミナルで `cd development && claude` を実行
-- または `.vscode/tasks.json` のタスク「**開発: Claude Code 起動**」を呼ぶ
+- または `.vscode/tasks.json` のタスク「**開発: Claude Code 起動（個別）**」を呼ぶ
 - 起動時は本CLAUDE.mdを読み、シニアエンジニアとして応答する
 
 ### 入力: チケット受付

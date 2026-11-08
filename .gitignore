@@ -105,6 +105,10 @@ watcher.log
 .watcher-last-scan
 .watcher-last-scan.next
 *.log
+# 日次の自動抽出（.claude/scripts/extract-actions-daily.sh）の状態・連続失敗の数・通知の重複防止の印
+.claude/extract-cron.state
+.claude/extract-cron.failcount
+secretariat/logs/.extractor-unavailable
 
 # ============================================
 # Node.js / Web 開発

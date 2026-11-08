@@ -128,7 +128,7 @@ PM部は **独立したメインエージェント** として、秘書室とは
 
 ### 起動方法
 - AntiGravity (VS Code互換) の統合ターミナルで `cd product-management && claude` を実行
-- または `.vscode/tasks.json` のタスク「**PM: Claude Code 起動**」を呼ぶ
+- または `.vscode/tasks.json` のタスク「**PM: Claude Code 起動（個別）**」を呼ぶ
 - 起動時は本CLAUDE.mdを読み、PMロールで応答する
 
 ### 入力: 依頼の受け付け

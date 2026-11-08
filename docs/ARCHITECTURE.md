@@ -73,26 +73,55 @@ secretariat（統合）
 
 ---
 
-## 3. tmux 多重ウィンドウ運用
+## 3. tmux 2 セッション運用
 
-### 9ウィンドウ構成
+### 部署側セッション `brain-company`（8 ウィンドウ。`start-agents-all.sh`）
 ```
 0: pm                 ← プロジェクトマネジメント
 1: dev                ← 開発
 2: watcher            ← ファイル監視デーモン
-3: extractor          ← 自動抽出（Stop hook 受信）
-4: research
-5: marketing
-6: accounting
-7: legal
-8: ceo-office
-9: corporate-planning
+3: research
+4: marketing
+5: accounting
+6: legal
+7: corporate-planning
 ```
+- 軽量版 `start-agents.sh` は 0〜2（pm / dev / watcher）だけ
+- 社長室（ceo-office）は常駐エージェントを置かない保管ディレクトリなので、window を持たない（`org-chart.md` 参照）
 
-### 秘書室は tmux 外
-- 秘書室は社長との対話の主窓口
-- VS Code / AntiGravity の独立ターミナルで稼働
-- tmux 内に入れると send-keys 通知の受け手になり、対話と通知が混線するため
+### 秘書室セッション `brain-company-secretariat`（2 ウィンドウ。`start-secretariat.sh`）
+```
+0: secretariat        ← 秘書本体（社長との対話の主窓口。cwd = secretariat/）
+1: extractor          ← /extract-actions の送出先（cwd = ルート）
+```
+- 秘書室は社長との対話の主窓口なので、部署側とは別のセッションに置く
+  - 部署側を止めても・落ちても秘書は生き残る。ターミナルを閉じても文脈が残る
+  - watcher.sh は部署側セッションの window 名でしか send-keys しないので、知らせが秘書の対話に割り込まない（秘書への知らせは `secretariat/inbox/` のファイル）
+- extractor の cwd はルート。秘書室配下にすると、extractor 自身の終了が SessionEnd hook を再発火させて自己ループする
+
+### セッション名は完全一致（`=名前`）で指す
+- tmux は同名のセッションが無いと**前方一致**で探す。部署側が止まっている時に `-t brain-company` と書くと `brain-company-secretariat` に当たり、一斉起動が「起動中」と誤判定したり、停止が秘書を落としたりする
+- スクリプトと `.vscode/tasks.json` は `tmux has-session -t =brain-company` のように `=` を付けて指す
+
+### 前の会話から再開して起動する
+- 秘書・各部署の claude は `.claude/scripts/claude-role.sh` 経由で起動し、その dir の最新の対話の会話から再開する（`role_resume.py` が選ぶ）
+- 会話が無い・ほかの claude が今使っている・記録が読めない時は、新しい会話で起動する（理由を 1 行 `~/.local/state/brain-company/claude-role.log` に残す）
+- 「今使っている」は `/proc` で確かめる。`/proc` が無い PC（macOS 等）では確かめられないので、毎回新しい会話で起動する
+- 一発の会話（`claude -p`・SDK）は選ばない。白紙で起こすなら `CLAUDE_FRESH=1`、起動の後なら `/clear`
+- extractor は再開しない（日ごとの抽出はそれだけで完結し、前の日の文脈は要らない）
+- `~/.claude/projects/` と `~/.claude/sessions/` という Claude Code の公開されていない内部形式に頼っている。形式が変わった時は、新しい会話で起動する側に倒れる
+
+### 会話ログからの自動抽出
+- 秘書室の会話は hook（`log-user-prompt.sh` / `log-assistant-response.sh`）が `secretariat/memos/YYYY-MM-DD_会話ログ.md` に書く
+- extractor 窓に `/extract-actions` を送る経路は 2 つ:
+  1. **SessionEnd hook**（`.claude/hooks/on-session-end.sh`）: 秘書のセッションが終わった時
+  2. **cron の日次実行**（`.claude/scripts/extract-actions-daily.sh`。任意）: 秘書は常駐してセッションが滅多に終わらないので、こちらが主経路。直近 7 日の未抽出のうち最も古い日を選び、送った後に会話ログの印（`last_extracted_turn`）が進んだかを確かめる
+- 送れなかった時・実行された形跡が無い時は、`secretariat/inbox/` に知らせを書く（同じ障害では 1 件だけ）
+- extractor が確認の画面で止まっている時は、どちらの経路も送らない（Enter を送ると、既定の「Yes」で確認を通してしまうため）。見分けは `.claude/scripts/extractor_state.py`（Claude Code のセッションの記録の status を読む。2 つの経路で共有）
+
+### セッションの一覧の画面（`tools/session-board/`）
+- 動いている Claude Code / Codex のセッションを、ブラウザの 1 枚にカードで並べる（読むだけ・`127.0.0.1` だけで待ち受け）
+- `start-agents-all.sh` が起こす。詳細は `tools/session-board/README.md`
 
 ### tmux send-keys のクセ対策
 - Claude Code TUI は「文字列+Enter」を一度に送ると Enter が改行扱いになる
@@ -169,9 +198,9 @@ secretariat（統合）
 
 ### 部署追加
 1. 新規ディレクトリ + CLAUDE.md
-2. `watcher.sh` の WATCH_DIRS に追加
-3. `start-agents-all.sh` に window 追加
-4. `.vscode/tasks.json` に起動タスク追加
+2. `watcher.sh` の WATCH_DIRS と `process_file` の case に追加
+3. `start-agents-all.sh` に window 追加（`$CLAUDE_CMD` で起動し、`-t "=$SESSION:"` で指す）
+4. `.vscode/tasks.json` に個別起動タスク追加（`.claude/scripts/claude-role.sh` 経由）
 
 ### 事業部別管理
 - 経理・マーケのように事業部ごとに `business-unit-1/` `business-unit-2/` 等のサブフォルダ

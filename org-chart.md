@@ -102,7 +102,7 @@ graph LR
 
 | ディレクトリ | 部署名 | 役割 |
 |---|---|---|
-| `ceo-office/` | 社長室 | 代表社員の意思決定・ビジョン定義 |
+| `ceo-office/` | 社長室 | 代表社員の意思決定・ビジョン定義。**常駐エージェントは置かない保管ディレクトリ**（下記参照） |
 | `secretariat/` | 秘書室 | 全指示の受付・整理・振り分け（最重要） |
 | `product-management/` | プロダクトマネジメント部 | 複数案件の進捗・マイルストーン管理 |
 | `research/` | リサーチ部 | 市場・競合・トレンド・ユーザー調査 |
@@ -112,6 +112,15 @@ graph LR
 | `legal/` | 法務部 | 契約・法人・コンプラ・PII・労務・社労士業務・行政手続き |
 | `corporate-planning/` | 経営企画部 | 事業計画・戦略立案・経営KPI・中長期計画・他部署成果物の統合編集（2026-04-25 新設） |
 | `secretariat/ReferenceFILEs/` | 参考資料（秘書室管轄） | 画像・スクショ等のテンポラリー置き場 |
+
+### 社長室（ceo-office）の位置づけ
+
+社長室は組織図に残るが、**常駐エージェント（tmux の window）は置かない**。
+
+- **実体は「保管ディレクトリ」**: `decisions/`（意思決定の不可逆記録）・`profile.md`（社長プロフィールの source of truth）は現役。**削除しない**
+- **書き込みは秘書室が行う**（意思決定の記録は `ceo-office/decisions/` へ）
+- **`start-agents-all.sh` は社長室を起動しない**（部署側は 8 window: pm / dev / watcher / research / marketing / accounting / legal / corporate-planning。秘書と extractor は秘書専用のセッション）
+- **必要な時の個別起動は残す**: `.vscode/tasks.json` の「社長室: Claude Code 起動（個別）」
 
 ## 基本ワークフロー
 
